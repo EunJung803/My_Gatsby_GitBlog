@@ -1,15 +1,16 @@
+import { StaticImage } from "gatsby-plugin-image";
 import React from "react"
 import Layout from "../components/Layout";
 
 // markup
 const IndexPage = () => {
   return (
-    <main>
-      <title>Home Page</title>
-      <Layout>
-        <h1>Home Page</h1>
+      <Layout pageTitle="Home Page">
+        <p>
+          Tutorial of the Gatsby homepage 
+        </p>
+        <StaticImage src="https://picsum.photos/id/237/200/300"></StaticImage>
       </Layout>
-    </main>
   );
 };
 

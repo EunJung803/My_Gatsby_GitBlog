@@ -1,20 +1,40 @@
 import { Link } from "gatsby";
 import React from "react";
 
-function Layout({ children }) {
+import {
+  container,
+  heading,
+  navLinks,
+  navLinkItem,
+  navLinkText,
+} from "./layout.module.css";
+
+function Layout({ pageTitle, children }) {
   return (
-    <>
+    <div className={container}>
+      <title>{pageTitle}</title>
+      <nav>
+        <ul className={navLinks}>
+          <li className={navLinkItem}>
+            <Link className={navLinkText} to="/">
+              Home
+            </Link>
+          </li>
+          <li className={navLinkItem}>
+            <Link className={navLinkText} to="/about">
+              About
+            </Link>
+          </li>
+        </ul>
+      </nav>
+
       <main>
-        <div style={{ display: "flex", gap: 10}}>
-          <Link to="/">홈</Link>
-          <Link to="/about">어바웃</Link>
-        </div>
-
+        <h1 className={heading}>{pageTitle}</h1>
         {children}
-
-        <div>ⓒ EunJung</div>
       </main>
-    </>
+
+      <div>ⓒ EunJung</div>
+    </div>
   );
 }
 
