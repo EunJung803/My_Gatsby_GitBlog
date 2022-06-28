@@ -1,11 +1,12 @@
 import React from "react"
-
+import Head from "./Head";
 
 // markup
 const IndexPage = () => {
   return (
     <main>
       <title>Home Page</title>
+        <Head />
       <h1>Home Page</h1>
     </main>
   );
