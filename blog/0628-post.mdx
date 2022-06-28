@@ -1,0 +1,526 @@
+---
+title: "6/28 Gatsby로 GitBlog만들기"
+date: "2022-06-28"
+---
+---
+
+### 다른 환경에서 이어서 작업하기
+
+- clone 후,
+
+```bash
+npm install —force
+npm run start
+```
+<br/>
+
+### 리액트 구조
+
+```jsx
+import React from "react"
+
+// markup
+const IndexPage = () => {
+  return (
+    <main>
+      <title>Home Page</title>
+      <h1>Home Page</h1>
+    </main>
+  );
+};
+
+export default IndexPage
+```
+
+- 앞 뒤로 import, export 필요
+- 안에 바로 html 사용
+- `class` X → `className` O
+- `style={ {color:”red”} }` 이렇게 객체 형태로 style을 사용해야함
+- `<br />` 사용
+
+<br/>
+
+### GNB
+
+- 글로벌 네비게이션 바
+- 바뀌지 않는 메뉴 바
+
+예시 )
+
+```jsx
+<div style={{display: "flex"}}>
+  <a href="/">로고</a>
+  <div style={{flowGrow:1}}></div>
+  <a href="/test" style={{padding:10}}>테스트</a>
+  <a href="/test-space" style={{padding:10}}>테스트 스페이스</a>
+</div>
+```
+
+페이지 로딩시간 없이 바로 불러오기 → `<Link>` 사용 (gatsby에 있는 모듈)
+
+- gatsby가 모든 페이지를 한번에 다 받아오기 때문에 그 안에서  Link로 이동하는게 더 효율적이다
+- a보다 Link가 더 빠르다
+
+```jsx
+import { Link } from "gatsby";
+
+<Link to="/" style={{padding:10}}>
+  로고
+</Link>
+<div style={{flexGrow:1}}></div>
+<Link to="/test" style={{padding:10}}>
+  테스트
+</Link>
+<Link to="/test-space" style={{padding:10}}>
+  테스트 스페이스
+</Link>
+```
+
+- Head 사용
+
+```jsx
+const Head = () => <div>로고 / 메뉴아이템 1 / 메뉴아이템 2 / 메뉴아이템 3</div>
+
+function App() {
+  return <>
+    <Head />
+    <div>내용</div>
+  </>;
+}
+
+ReactDOM.render(<App />, document.getElementById("root"));
+```
+
+<br/>
+
+### 컴포넌트 사용 - Layout
+
+- 레이아웃 구조 ( {children} 포함 )
+
+```jsx
+import React from "react";
+
+function Layout({children}) {
+	return  (
+		<>
+			<main>
+				<div> </div>
+				{children}
+			</main>
+		</>
+	);
+}
+
+export default Layout
+```
+
+- Layout 사용
+- Const 나 function 이나 둘 다 가능하다
+
+```jsx
+Const Layout = () => {
+  const msg = "hi"
+  return (
+  <span style ={{color:"red"}}> {msg} </span>
+  );
+}
+
+function App() {
+  return <>
+    <Layout></Layout>
+    <div>내용</div>
+  </>;
+}
+
+ReactDOM.render(<App />, document.getElementById("root"));
+```
+
+- msg 추가해보기
+
+```jsx
+console.clear();
+
+import React, { useState, useEffect } from "https://cdn.skypack.dev/react";
+import ReactDOM from "https://cdn.skypack.dev/react-dom";
+
+const Layout = ({msg, msg2}) => {
+  return (
+  <span style ={{color:"red"}}> {msg} </span>
+  );
+}
+
+function App() {
+  return <>
+    <Layout msg="zzz" msg2="hhh"></Layout>
+    <div>내용</div>
+  </>;
+}
+
+ReactDOM.render(<App />, document.getElementById("root"));
+```
+
+- {children} 사용
+
+```jsx
+console.clear();
+
+import React, { useState, useEffect } from "https://cdn.skypack.dev/react";
+import ReactDOM from "https://cdn.skypack.dev/react-dom";
+
+const Layout = ({children}) => {
+  return (
+  <span style ={{color:"red"}}> {children} </span>
+  );
+}
+
+function App() {
+  return <>
+    <Layout>hahaha</Layout>
+    <div>내용</div>
+  </>;
+}
+
+ReactDOM.render(<App />, document.getElementById("root"));
+```
+
+- Layout 여러개
+
+[https://codepen.io/eunjung803/pen/KKoKPXz?editors=0110](https://codepen.io/eunjung803/pen/KKoKPXz?editors=0110)
+
+```jsx
+console.clear();
+
+import React, { useState, useEffect } from "https://cdn.skypack.dev/react";
+import ReactDOM from "https://cdn.skypack.dev/react-dom";
+
+const Layout = ({ children }) => {
+  return (
+    <div style={{ color: "blue", border: "1px solid red", padding: 10 }}>
+      {" "}
+      {children}{" "}
+    </div>
+  );
+};
+
+function App() {
+  return (
+    <>
+      <Layout>하하하1</Layout>
+      <Layout>하하하2</Layout>
+      <Layout>하하하3</Layout>
+      <div>내용</div>
+    </>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById("root"));
+```
+
+<br/>
+
+### Layout 적용해보기
+
+- Layout.js
+
+```jsx
+import { Link } from "gatsby";
+import React from "react";
+
+function Layout({ children }) {
+  return (
+    <>
+      <main>
+        <div style={{ display: "flex", gap: 10}}>
+          <Link to="/">홈</Link>
+          <Link to="/about">어바웃</Link>
+        </div>
+
+        {children}
+
+        <div>ⓒ EunJung</div>
+      </main>
+    </>
+  );
+}
+
+export default Layout;
+```
+
+- Index.js
+
+```jsx
+import React from "react"
+import Layout from "../components/Layout";
+
+// markup
+const IndexPage = () => {
+  return (
+    <main>
+      <title>Home Page</title>
+      <Layout>
+        <h1>Home Page</h1>
+      </Layout>
+    </main>
+  );
+};
+
+export default IndexPage
+```
+
+<br/>
+
+### 컨테이너
+
+- 반응형 웹을 표현할 수 있다
+- max-width만 건들이기 (width 주지말고)
+
+```jsx
+/* 반응형 */
+.con {
+  max-width:1200px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+/* 고정형 */
+.con {
+  width:1200px;
+  margin-left:auto;
+  margin-right:auto;
+}
+```
+<br/>
+### CSS 수정
+
+```css
+.container {
+  margin: auto;
+  max-width: 500px;
+  font-family: sans-serif;
+}
+
+.heading {
+  color: rebeccapurple;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  padding-left: 0;
+}
+
+.nav-link-item {
+  padding-right: 2rem;
+}
+
+.nav-link-text {
+  color: black;
+}
+```
+
+```jsx
+import { Link } from "gatsby";
+import React from "react";
+
+import {
+  container,
+  heading,
+  navLinks,
+  navLinkItem,
+  navLinkText,
+} from "./layout.module.css";
+
+function Layout({ pageTitle, children }) {
+  return (
+    <div className={container}>
+      <title>{pageTitle}</title>
+      <nav>
+        <ul className={navLinks}>
+          <li className={navLinkItem}>
+            <Link className={navLinkText} to="/">
+              Home
+            </Link>
+          </li>
+          <li className={navLinkItem}>
+            <Link className={navLinkText} to="/about">
+              About
+            </Link>
+          </li>
+        </ul>
+      </nav>
+
+      <main>
+        <h1 className={heading}>{pageTitle}</h1>
+        {children}
+      </main>
+
+      <div>ⓒ EunJung</div>
+    </div>
+  );
+}
+
+export default Layout;
+```
+
+<br/>
+
+### 이미지 삽입
+
+**gatsby-plugin-image gatsby-plugin-sharp gatsby-source-filesystem 설치 및 세팅법**
+
+```bash
+npm install gatsby-plugin-image gatsby-plugin-sharp gatsby-source-filesystem
+
+```
+
+```json
+// gatsby-config.js
+module.exports = {
+  siteMetadata: {
+    title: "My First Gatsby Site",
+  },
+  plugins: [
+    "gatsby-plugin-image",
+    "gatsby-plugin-sharp",
+  ],
+};
+```
+
+- StaticImage 사용 (자동으로 알아서 조정됨 - 부모 엘리먼트를 벗어나지 않음)
+
+[Lorem Picsum](https://picsum.photos/)
+
+- Img 사용 (크기 조정 자동으로 안됨 - 부모 엘리먼트에서 넘어가면 그냥 넘어가짐)
+
+<br/>
+
+### GraphQL
+
+- Query Language
+
+[http://localhost:8000/___graphql](http://localhost:8000/___graphql)
+
+- 일종의 실험실
+- 뭔가를 요청해 볼 수 있다
+- 각각의 쿼리는 고유 이름이 있어야함
+- 여러 정보를 확인할 수 있다
+
+- ctrl + space → 뭐가 필요한지 목록이 나옴
+- ctrl + enter → 그것에 대한 정보가 나옴
+
+```graphql
+query {
+	site {
+		siteMetadata {
+			title
+			description
+		}
+	}
+}
+```
+
+<br/>
+
+### map()
+
+`[1, 2, 3] .map()` 을 하면
+복사본이 나오는데
+이걸 바꿔주기 위해서는 로직이 필요
+
+- map = mapping
+
+<aside>
+🧐 [1, 2, 3] → [2, 4, 6]
+
+</aside>
+
+- 그 로직은 함수로 구현
+
+```jsx
+function 함수(input) {
+return input*2;
+}
+```
+
+```jsx
+const arr = [1, 2, 3]
+const newArr = arr.map(함수);
+```
+
+저 함수를 줄이는 방법
+
+- const 사용
+
+```jsx
+const 함수 = (input) => {
+return input*2;
+}
+```
+
+- 중괄호, return 제거
+
+```jsx
+const 함수 = (input) => input*2;
+```
+
+- 혹은 바로 넣어도 됨
+
+```jsx
+const arr = [1, 2, 3]
+const newArr = arr.map((input) => input*2;);
+```
+
+그렇다면 map 안에 tag 넣기?
+
+- 이렇게 바꾼다면?
+
+```jsx
+const arr = [1, 2, 3]
+const newArr = arr.map((v) => <span>{v}</span>);
+```
+
+- 이건 이거랑 같다
+
+```jsx
+const newArr[<span>1</span>, <span>2</span>, <span>3</span>, ]
+```
+
+- map의 규칙 = key를 꼭 넣어줘야함
+
+```jsx
+const newArr = arr.map((v, i) => <span key={}>{v}</span>);
+
+/*
+i 에는 0, 1, 2
+v에는 1, 2, 3
+이 들어간다
+*/
+```
+
+참고 )
+
+[Part 6: Create Pages Programmatically](https://www.gatsbyjs.com/docs/tutorial/part-6/)
+
+<br/>
+
+### slug
+
+```jsx
+<Link to={/blog/${node.slug}}>{node.frontmatter.title}</Link>
+```
+
+- 이걸로 연결해서 우리의 블로그 포스팅으로 이동할 수 있다
+
+<br/>
+
+### 마크다운 문법
+
+[마크다운(Markdown) 사용법](https://gist.github.com/ihoneymon/652be052a0727ad59601)
+
+[React Hook Form 라이브러리 사용법](https://www.daleseo.com/react-hook-form/)
+
+<br/>
+
+### MDX
+
+- 마크다운을 확장한 언어
