@@ -6,10 +6,11 @@ import Layout from "../components/Layout";
 const IndexPage = () => {
   return (
       <Layout pageTitle="Home Page">
+        <StaticImage src="https://picsum.photos/id/237/200/300"></StaticImage>
         <p>
           Tutorial of the Gatsby homepage 
         </p>
-        <StaticImage src="https://picsum.photos/id/237/200/300"></StaticImage>
+        
       </Layout>
   );
 };
